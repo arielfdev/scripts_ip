@@ -26,12 +26,6 @@ def main() -> None:
             desired_quantity,
         )
         elapsed_time = perf_counter() - started_at
-        save_scan_history(
-            f"{network_base}.{start_ip}-{network_base}.{end_ip}",
-            desired_quantity,
-            result.sequence,
-            elapsed_time,
-        )
     except (AddressValueError, ValueError) as error:
         print(f"Entrada invalida: {error}")
         return
@@ -43,6 +37,12 @@ def main() -> None:
         return
 
     _show_result(result, elapsed_time)
+    _save_history(
+        f"{network_base}.{start_ip}-{network_base}.{end_ip}",
+        desired_quantity,
+        result,
+        elapsed_time,
+    )
 
 
 def _read_network_base() -> str:
@@ -78,6 +78,24 @@ def _show_result(result: ScanResult, elapsed_time: float) -> None:
 
     print(f"Quantidade de IPs testados: {result.tested_quantity}")
     print(f"Tempo total: {elapsed_time:.2f} segundos")
+
+
+def _save_history(
+    network_range: str,
+    desired_quantity: int,
+    result: ScanResult,
+    elapsed_time: float,
+) -> None:
+    """Save scan history without hiding an already completed result."""
+    try:
+        save_scan_history(
+            network_range,
+            desired_quantity,
+            result.sequence,
+            elapsed_time,
+        )
+    except OSError as error:
+        print(f"Aviso: nao foi possivel salvar o historico: {error}")
 
 
 if __name__ == "__main__":
