@@ -39,3 +39,17 @@ is_online = ping_ip("127.0.0.1")
 Internamente a funcao executa `ping -n 1 -w 300 IP` e retorna `True` quando
 o comando recebe resposta. Falhas de execucao e alvos sem resposta retornam
 `False`.
+
+## Scanner
+
+O scanner procura uma sequencia de IPs que nao responderam ao ping:
+
+```python
+from core.scanner import find_available_sequence
+
+ips = find_available_sequence("10.106.5", 1, 254, 4)
+```
+
+O exemplo testa IPs entre `10.106.5.1` e `10.106.5.254` ate encontrar
+quatro enderecos seguidos aparentemente livres. Ao finalizar, o scanner mostra
+os IPs ocupados, os IPs livres testados e a quantidade total testada.
