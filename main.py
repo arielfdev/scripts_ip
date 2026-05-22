@@ -4,6 +4,7 @@ from ipaddress import AddressValueError, IPv4Address
 from time import perf_counter
 
 from core.scanner import ScanResult, scan_available_sequence
+from core.utils import save_scan_history
 
 
 def main() -> None:
@@ -25,6 +26,12 @@ def main() -> None:
             desired_quantity,
         )
         elapsed_time = perf_counter() - started_at
+        save_scan_history(
+            f"{network_base}.{start_ip}-{network_base}.{end_ip}",
+            desired_quantity,
+            result.sequence,
+            elapsed_time,
+        )
     except (AddressValueError, ValueError) as error:
         print(f"Entrada invalida: {error}")
         return

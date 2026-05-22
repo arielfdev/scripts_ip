@@ -28,6 +28,7 @@ python main.py
 
 Ao executar `main.py`, informe a base da rede, o IP inicial, o IP final e a
 quantidade desejada para procurar uma sequencia livre pelo terminal.
+Cada busca concluida tambem fica registrada em `logs/scan_history.txt`.
 
 ## Ping
 

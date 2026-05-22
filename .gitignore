@@ -20,6 +20,7 @@ htmlcov/
 # Runtime logs
 logs/*
 !logs/.gitkeep
+!logs/scan_history.txt
 *.log
 
 # Local editor and OS files
