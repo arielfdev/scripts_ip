@@ -1,8 +1,19 @@
 """Sequential IP scanning helpers."""
 
+from dataclasses import dataclass
 from ipaddress import IPv4Address
 
 from core.ping import ping_ip
+
+
+@dataclass
+class ScanResult:
+    """Store the result and scan details for a sequential IP search."""
+
+    sequence: list[str] | None
+    occupied_ips: list[str]
+    free_ips: list[str]
+    tested_quantity: int
 
 
 def find_available_sequence(
@@ -12,6 +23,23 @@ def find_available_sequence(
     desired_quantity: int,
 ) -> list[str] | None:
     """Find a consecutive sequence of IPs that do not answer ping requests."""
+    result = scan_available_sequence(
+        network_base,
+        start_ip,
+        end_ip,
+        desired_quantity,
+    )
+    _show_scan_summary(result)
+    return result.sequence
+
+
+def scan_available_sequence(
+    network_base: str,
+    start_ip: int,
+    end_ip: int,
+    desired_quantity: int,
+) -> ScanResult:
+    """Scan a host range and return the full sequential search report."""
     _validate_scan_range(network_base, start_ip, end_ip, desired_quantity)
 
     occupied_ips: list[str] = []
@@ -34,12 +62,20 @@ def find_available_sequence(
         current_sequence.append(ip)
 
         if len(current_sequence) == desired_quantity:
-            _show_scan_summary(occupied_ips, free_ips, tested_quantity)
-            return current_sequence
+            return ScanResult(
+                sequence=current_sequence.copy(),
+                occupied_ips=occupied_ips,
+                free_ips=free_ips,
+                tested_quantity=tested_quantity,
+            )
 
     # The range ended before a long enough free sequence was discovered.
-    _show_scan_summary(occupied_ips, free_ips, tested_quantity)
-    return None
+    return ScanResult(
+        sequence=None,
+        occupied_ips=occupied_ips,
+        free_ips=free_ips,
+        tested_quantity=tested_quantity,
+    )
 
 
 def _validate_scan_range(
@@ -60,12 +96,8 @@ def _validate_scan_range(
     IPv4Address(f"{network_base}.{end_ip}")
 
 
-def _show_scan_summary(
-    occupied_ips: list[str],
-    free_ips: list[str],
-    tested_quantity: int,
-) -> None:
+def _show_scan_summary(result: ScanResult) -> None:
     """Print the requested scan summary for the operator."""
-    print(f"IPs ocupados: {occupied_ips}")
-    print(f"IPs livres: {free_ips}")
-    print(f"Quantidade testada: {tested_quantity}")
+    print(f"IPs ocupados: {result.occupied_ips}")
+    print(f"IPs livres: {result.free_ips}")
+    print(f"Quantidade testada: {result.tested_quantity}")

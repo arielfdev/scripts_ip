@@ -26,6 +26,9 @@ pip install -r requirements.txt
 python main.py
 ```
 
+Ao executar `main.py`, informe a base da rede, o IP inicial, o IP final e a
+quantidade desejada para procurar uma sequencia livre pelo terminal.
+
 ## Ping
 
 O modulo `core.ping` valida se um IP responde a um ping no Windows:
